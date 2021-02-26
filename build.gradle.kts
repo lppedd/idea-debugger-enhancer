@@ -56,5 +56,6 @@ tasks {
     version(project.version)
     sinceBuild("192.5728")
     untilBuild(null)
+    pluginDescription(File("plugin-description.html").readText(Charsets.UTF_8))
   }
 }
