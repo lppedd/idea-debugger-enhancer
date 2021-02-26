@@ -23,7 +23,7 @@ dependencies {
 }
 
 intellij {
-  version = "IU-LATEST-EAP-SNAPSHOT"
+  version = "IU-192.5728.98"
   downloadSources = true
   setPlugins("java")
 }
