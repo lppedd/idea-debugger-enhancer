@@ -2,9 +2,10 @@ package com.github.lppedd.debugger
 
 import com.github.lppedd.debugger.java.EnhancedJavaLineBreakpointProperties
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.ComboBox
-import com.intellij.ui.EnumComboBoxModel
+import com.intellij.ui.Gray
+import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBCheckBox
+import com.intellij.ui.components.JBRadioButton
 import com.intellij.util.ui.JBUI
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
@@ -12,10 +13,7 @@ import com.intellij.xdebugger.impl.breakpoints.XBreakpointBase
 import com.intellij.xdebugger.impl.ui.XDebuggerExpressionComboBox
 import org.jetbrains.java.debugger.breakpoints.properties.JavaLineBreakpointProperties
 import java.awt.BorderLayout
-import java.awt.FlowLayout
-import javax.swing.Box
-import javax.swing.JComponent
-import javax.swing.JPanel
+import javax.swing.*
 
 /**
  * @author Edoardo Luppi
@@ -26,21 +24,30 @@ internal class EnhancedBreakpointPanel(
 ) : XBreakpointCustomPropertiesPanel<XLineBreakpoint<JavaLineBreakpointProperties>>() {
   private companion object {
     private const val HISTORY_ID = "ENHANCED_FORCE_EXPRESSION"
+    private val separatorColor = JBColor.namedColor("Group.separatorColor", JBColor(Gray.xCD, Gray.x51))
   }
 
   private val mainPanel = JPanel(BorderLayout())
-  private val forceReturnCheckBox = JBCheckBox("Force return with")
-  private val typeComboBox = ComboBox(EnumComboBoxModel(ForceType::class.java), JBUI.scale(90))
+  private val forceReturnCheckBox = JBCheckBox("Force return")
+  private val valueButton = JBRadioButton("Value")
+  private val exceptionButton = JBRadioButton("Exception")
 
   @Volatile
   private lateinit var expressionTextField: XDebuggerExpressionComboBox
 
   override fun getComponent(): JComponent =
     if (otherPanel == null) {
+      mainPanel.border = JBUI.Borders.empty(5, 0)
       mainPanel
-    } else JPanel(BorderLayout(0, JBUI.scale(5))).also {
-      it.add(otherPanel.component, BorderLayout.PAGE_START)
-      it.add(mainPanel, BorderLayout.CENTER)
+    } else JPanel(BorderLayout()).also {
+      mainPanel.border = JBUI.Borders.merge(
+        JBUI.Borders.emptyTop(10),
+        JBUI.Borders.customLine(separatorColor, 1, 0, 0, 0),
+        true,
+      )
+
+      it.add(otherPanel.component, BorderLayout.CENTER)
+      it.add(mainPanel, BorderLayout.PAGE_END)
     }
 
   override fun saveTo(breakpoint: XLineBreakpoint<JavaLineBreakpointProperties>) {
@@ -52,52 +59,73 @@ internal class EnhancedBreakpointPanel(
     if (properties is EnhancedJavaLineBreakpointProperties) {
       properties.setExpression(EnhancedBreakpointExpressionState(expressionTextField.expression))
       properties.setEnabled(forceReturnCheckBox.isSelected)
-      properties.setForceType(typeComboBox.selectedItem as ForceType)
+      properties.setForceType(if (valueButton.isSelected) ForceType.VALUE else ForceType.EXCEPTION)
     }
   }
 
   override fun loadFrom(breakpoint: XLineBreakpoint<JavaLineBreakpointProperties>) {
     otherPanel?.loadFrom(breakpoint)
 
-    val type = breakpoint.type
-
-    // noinspection ConstantConditions
     expressionTextField = XDebuggerExpressionComboBox(
       project,
-      type.getEditorsProvider(breakpoint, project)!!,
+      breakpoint.type.getEditorsProvider(breakpoint, project)!!,
       HISTORY_ID,
       breakpoint.sourcePosition,
       true,
-      true
+      false,
     )
 
     val properties = breakpoint.properties
 
     if (breakpoint is XBreakpointBase<*, *, *> && properties is EnhancedJavaLineBreakpointProperties) {
-      val expression = properties.getExpression(breakpoint)
-      if (expression != null) {
-        expressionTextField.expression = expression.toXExpression()
+      properties.getExpression(breakpoint)?.let {
+        expressionTextField.expression = it.toXExpression()
       }
-      expressionTextField.setEnabled(properties.isEnabled(breakpoint))
-      forceReturnCheckBox.isSelected = properties.isEnabled(breakpoint)
-      typeComboBox.model.selectedItem = properties.getForceType(breakpoint)
-      typeComboBox.isEnabled = properties.isEnabled(breakpoint)
+
+      val isEnabled = properties.isEnabled(breakpoint)
+      expressionTextField.setEnabled(isEnabled)
+      forceReturnCheckBox.isSelected = isEnabled
+      valueButton.isEnabled = isEnabled
+      exceptionButton.isEnabled = isEnabled
+
+      val toSelect = when (properties.getForceType(breakpoint)) {
+        ForceType.VALUE     -> valueButton
+        ForceType.EXCEPTION -> exceptionButton
+      }
+
+      toSelect.isSelected = true
     }
 
-    forceReturnCheckBox.border = JBUI.Borders.emptyRight(3)
+    forceReturnCheckBox.border = JBUI.Borders.emptyRight(4)
     forceReturnCheckBox.addItemListener {
       val isSelected = forceReturnCheckBox.isSelected
       expressionTextField.setEnabled(isSelected)
-      typeComboBox.setEnabled(isSelected)
+      valueButton.isEnabled = isSelected
+      exceptionButton.isEnabled = isSelected
     }
 
-    val forceReturnPanel = JPanel(FlowLayout(FlowLayout.LEADING, 0, 0))
-    forceReturnPanel.add(forceReturnCheckBox)
-    forceReturnPanel.add(Box.createHorizontalStrut(JBUI.scale(1)))
-    forceReturnPanel.add(typeComboBox)
+    ButtonGroup().also {
+      it.add(valueButton)
+      it.add(exceptionButton)
+    }
 
-    mainPanel.add(forceReturnPanel, BorderLayout.PAGE_START)
+    val forceReturnBox = Box.createHorizontalBox().also {
+      it.add(forceReturnCheckBox)
+      it.add(Box.createHorizontalStrut(JBUI.scale(6)))
+      it.add(valueButton)
+      it.add(Box.createHorizontalStrut(JBUI.scale(6)))
+      it.add(exceptionButton)
+      it.border = BorderFactory.createEmptyBorder(0, 1, JBUI.scale(5), 0)
+    }
+
+    val languageChooserBox = Box.createHorizontalBox().also {
+      it.add(Box.createHorizontalGlue())
+      it.add(expressionTextField.languageChooser)
+      it.border = JBUI.Borders.empty(0, 2, 4, 2)
+    }
+
+    mainPanel.add(forceReturnBox, BorderLayout.PAGE_START)
     mainPanel.add(expressionTextField.component, BorderLayout.CENTER)
-    mainPanel.border = JBUI.Borders.empty(5, 0)
+    mainPanel.add(languageChooserBox, BorderLayout.PAGE_END)
   }
 }
