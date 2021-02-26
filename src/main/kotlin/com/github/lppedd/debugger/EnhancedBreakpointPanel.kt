@@ -18,6 +18,7 @@ import javax.swing.*
 /**
  * @author Edoardo Luppi
  */
+@Suppress("DialogTitleCapitalization")
 internal class EnhancedBreakpointPanel(
   private val project: Project,
   private val otherPanel: XBreakpointCustomPropertiesPanel<XLineBreakpoint<JavaLineBreakpointProperties>>?,
@@ -28,9 +29,9 @@ internal class EnhancedBreakpointPanel(
   }
 
   private val mainPanel = JPanel(BorderLayout())
-  private val forceReturnCheckBox = JBCheckBox("Force return")
-  private val valueButton = JBRadioButton("Value")
-  private val exceptionButton = JBRadioButton("Exception")
+  private val forceReturnCheckBox = JBCheckBox(EnhancedDebuggerBundle["panel.forceReturn"])
+  private val valueButton = JBRadioButton(EnhancedDebuggerBundle["panel.returnType.value"])
+  private val exceptionButton = JBRadioButton(EnhancedDebuggerBundle["panel.returnType.exception"])
 
   @Volatile
   private lateinit var expressionTextField: XDebuggerExpressionComboBox
