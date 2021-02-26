@@ -255,7 +255,6 @@
         <list>
           <option value="ConstantConditions" />
           <option value="SimplifiableIfStatement" />
-          <option value="UnstableApiUsage" />
         </list>
       </option>
     </inspection_tool>
