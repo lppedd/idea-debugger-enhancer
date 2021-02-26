@@ -10,7 +10,7 @@ import java.util.*
  * @author Edoardo Luppi
  */
 @Suppress("UnstableApiUsage")
-object EnhancedDebuggerBundle {
+internal object EnhancedDebuggerBundle {
   private const val BUNDLE = "messages.EnhancedDebuggerBundle"
 
   private var bundleReference: Reference<ResourceBundle>? = null
