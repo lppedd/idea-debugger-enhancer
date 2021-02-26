@@ -1,0 +1,26 @@
+<!--suppress PluginXmlValidity, PluginXmlDynamicPlugin -->
+<idea-plugin>
+  <id>com.github.lppedd.idea-debugger-enhancer</id>
+  <name>Debugger Enhancer</name>
+  <vendor
+      email="lp.edoardo@gmail.com"
+      url="https://www.github.com/lppedd/idea-debugger-enhancer"
+  >
+    Edoardo Luppi
+  </vendor>
+
+  <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.java</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <ApplicationLoadListener
+        implementation="com.github.lppedd.debugger.EnhancedDebuggerApplicationLoadListener"
+    />
+    <debugger.javaBreakpointHandlerFactory
+        implementation="com.github.lppedd.debugger.EnhancedJavaLineBreakpointHandlerFactory"
+    />
+    <xdebugger.breakpointType
+        implementation="com.github.lppedd.debugger.EnhancedJavaLineBreakpointType"
+    />
+  </extensions>
+</idea-plugin>
