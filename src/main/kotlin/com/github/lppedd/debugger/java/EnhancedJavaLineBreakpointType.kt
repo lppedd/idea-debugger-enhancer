@@ -59,7 +59,7 @@ internal class EnhancedJavaLineBreakpointType :
     EnhancedJavaLineBreakpointProperties()
 
   override fun createCustomPropertiesPanel(project: Project): XBreakpointCustomPropertiesPanel<XLineBreakpoint<JavaLineBreakpointProperties>> =
-    EnhancedBreakpointPanel(project)
+    EnhancedBreakpointPanel(project, super.createCustomPropertiesPanel(project))
 
   private fun wrapVariant(variant: JavaBreakpointVariant): DelegatingXLineBreakpointAllVariant =
     DelegatingXLineBreakpointAllVariant(variant)

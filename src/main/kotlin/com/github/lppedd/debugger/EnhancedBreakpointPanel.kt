@@ -1,5 +1,6 @@
 package com.github.lppedd.debugger
 
+import com.github.lppedd.debugger.java.EnhancedJavaLineBreakpointProperties
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.EnumComboBoxModel
@@ -20,26 +21,31 @@ import javax.swing.JPanel
  * @author Edoardo Luppi
  */
 internal class EnhancedBreakpointPanel(
-  private val project: Project
+  private val project: Project,
+  private val otherPanel: XBreakpointCustomPropertiesPanel<XLineBreakpoint<JavaLineBreakpointProperties>>?,
 ) : XBreakpointCustomPropertiesPanel<XLineBreakpoint<JavaLineBreakpointProperties>>() {
-  companion object {
+  private companion object {
     private const val HISTORY_ID = "ENHANCED_FORCE_EXPRESSION"
   }
 
   private val mainPanel = JPanel(BorderLayout())
   private val forceReturnCheckBox = JBCheckBox("Force return with")
-  private val typeComboBox = ComboBox(
-    EnumComboBoxModel(ForceType::class.java),
-    JBUI.scale(90)
-  )
+  private val typeComboBox = ComboBox(EnumComboBoxModel(ForceType::class.java), JBUI.scale(90))
 
   @Volatile
   private lateinit var expressionTextField: XDebuggerExpressionComboBox
 
   override fun getComponent(): JComponent =
-    mainPanel
+    if (otherPanel == null) {
+      mainPanel
+    } else JPanel(BorderLayout(0, JBUI.scale(5))).also {
+      it.add(otherPanel.component, BorderLayout.PAGE_START)
+      it.add(mainPanel, BorderLayout.CENTER)
+    }
 
   override fun saveTo(breakpoint: XLineBreakpoint<JavaLineBreakpointProperties>) {
+    otherPanel?.saveTo(breakpoint)
+
     expressionTextField.saveTextInHistory()
     val properties = breakpoint.properties
 
@@ -51,6 +57,8 @@ internal class EnhancedBreakpointPanel(
   }
 
   override fun loadFrom(breakpoint: XLineBreakpoint<JavaLineBreakpointProperties>) {
+    otherPanel?.loadFrom(breakpoint)
+
     val type = breakpoint.type
 
     // noinspection ConstantConditions
