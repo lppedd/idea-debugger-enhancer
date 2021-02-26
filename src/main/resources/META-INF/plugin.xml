@@ -12,6 +12,8 @@
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.modules.java</depends>
 
+  <resource-bundle>messages.EnhancedDebuggerBundle</resource-bundle>
+
   <extensions defaultExtensionNs="com.intellij">
     <ApplicationLoadListener
         implementation="com.github.lppedd.debugger.EnhancedDebuggerApplicationLoadListener"
