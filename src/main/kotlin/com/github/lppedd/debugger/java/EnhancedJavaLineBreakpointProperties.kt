@@ -1,5 +1,7 @@
-package com.github.lppedd.debugger
+package com.github.lppedd.debugger.java
 
+import com.github.lppedd.debugger.EnhancedBreakpointExpressionState
+import com.github.lppedd.debugger.ForceType
 import com.intellij.util.ReflectionUtil
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Attribute

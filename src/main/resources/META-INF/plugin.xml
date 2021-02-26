@@ -19,10 +19,10 @@
         implementation="com.github.lppedd.debugger.EnhancedDebuggerApplicationLoadListener"
     />
     <debugger.javaBreakpointHandlerFactory
-        implementation="com.github.lppedd.debugger.EnhancedJavaLineBreakpointHandlerFactory"
+        implementation="com.github.lppedd.debugger.java.EnhancedJavaLineBreakpointHandlerFactory"
     />
     <xdebugger.breakpointType
-        implementation="com.github.lppedd.debugger.EnhancedJavaLineBreakpointType"
+        implementation="com.github.lppedd.debugger.java.EnhancedJavaLineBreakpointType"
     />
   </extensions>
 </idea-plugin>

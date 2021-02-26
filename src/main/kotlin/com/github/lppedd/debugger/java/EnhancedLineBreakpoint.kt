@@ -1,5 +1,7 @@
-package com.github.lppedd.debugger
+package com.github.lppedd.debugger.java
 
+import com.github.lppedd.debugger.EnhancedDebuggerBundle
+import com.github.lppedd.debugger.ForceType
 import com.intellij.debugger.engine.*
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.events.SuspendContextCommandImpl

@@ -1,5 +1,6 @@
-package com.github.lppedd.debugger
+package com.github.lppedd.debugger.java
 
+import com.github.lppedd.debugger.EnhancedBreakpointPanel
 import com.intellij.debugger.DebuggerBundle
 import com.intellij.debugger.ui.breakpoints.Breakpoint
 import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType

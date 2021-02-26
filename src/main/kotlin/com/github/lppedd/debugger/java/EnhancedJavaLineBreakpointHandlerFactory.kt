@@ -1,4 +1,4 @@
-package com.github.lppedd.debugger
+package com.github.lppedd.debugger.java
 
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.JavaBreakpointHandler
