@@ -38,7 +38,7 @@ internal class EnhancedJavaLineBreakpointType :
     project: Project,
     breakpoint: XBreakpoint<JavaLineBreakpointProperties>
   ): Breakpoint<JavaLineBreakpointProperties> =
-    EnhancedLineBreakpoint(project, breakpoint)
+    EnhancedJavaLineBreakpoint(project, breakpoint)
 
   override fun computeVariants(
     project: Project,

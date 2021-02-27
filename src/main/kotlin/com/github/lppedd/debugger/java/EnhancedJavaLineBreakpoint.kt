@@ -25,7 +25,7 @@ import org.jetbrains.java.debugger.breakpoints.properties.JavaLineBreakpointProp
 /**
  * @author Edoardo Luppi
  */
-internal class EnhancedLineBreakpoint(project: Project, xBreakpoint: XBreakpoint<*>) :
+internal class EnhancedJavaLineBreakpoint(project: Project, xBreakpoint: XBreakpoint<*>) :
   LineBreakpoint<JavaLineBreakpointProperties>(project, xBreakpoint) {
   override fun getSuspendPolicy(): String {
     val breakpoint = xBreakpoint
@@ -157,10 +157,10 @@ internal class EnhancedLineBreakpoint(project: Project, xBreakpoint: XBreakpoint
         debugProcess.removeDebugProcessListener(this)
 
         val requestManager = debugProcess.requestsManager
-        markVerified(requestManager.isVerified(this@EnhancedLineBreakpoint))
-        requestManager.deleteRequest(this@EnhancedLineBreakpoint)
+        markVerified(requestManager.isVerified(this@EnhancedJavaLineBreakpoint))
+        requestManager.deleteRequest(this@EnhancedJavaLineBreakpoint)
 
-        AppUIUtil.invokeOnEdt(this@EnhancedLineBreakpoint::updateUI)
+        AppUIUtil.invokeOnEdt(this@EnhancedJavaLineBreakpoint::updateUI)
       }
     })
   }
